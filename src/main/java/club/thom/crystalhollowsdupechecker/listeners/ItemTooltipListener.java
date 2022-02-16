@@ -1,11 +1,8 @@
 package club.thom.crystalhollowsdupechecker.listeners;
 
 import club.thom.crystalhollowsdupechecker.utils.CheckHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -28,7 +25,13 @@ public class ItemTooltipListener {
         if (CheckHelper.checkDuped(item.serializeNBT())) {
            event.toolTip.add(1, EnumChatFormatting.AQUA + EnumChatFormatting.OBFUSCATED.toString() +
                    "|||" + EnumChatFormatting.RED + EnumChatFormatting.BOLD + "POSSIBLY DUPED" +
-                   EnumChatFormatting.AQUA + EnumChatFormatting.OBFUSCATED + "|||");
+                   EnumChatFormatting.AQUA + EnumChatFormatting.OBFUSCATED + "|||" + EnumChatFormatting.GRAY + " (hold shift)");
+           if (GuiContainer.isShiftKeyDown()) {
+               event.toolTip.add(2, EnumChatFormatting.WHITE +
+                       "Likely duped in the Crystal Hollows dupe of Jan 2022.");
+               event.toolTip.add(3, EnumChatFormatting.WHITE +
+                       "Has originTag: ITEM_STASH.");
+           }
         }
     }
 
@@ -39,6 +42,7 @@ public class ItemTooltipListener {
         }
         GuiContainer container = (GuiContainer) event.gui;
         Container inventorySlots = container.inventorySlots;
+        // drawGradientRect obfuscated
         String[] methodNames = new String[]{"drawGradientRect", "func_73733_a"};
         Method drawGradientMethod = ReflectionHelper.findMethod(Gui.class, container, methodNames, int.class,
                 int.class, int.class, int.class, int.class, int.class);

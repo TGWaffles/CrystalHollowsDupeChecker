@@ -45,7 +45,7 @@ minecraft {
     mappings = "stable_22"
     // Add essential
     // Code to only update version in here and not in the java file
-    replaceIn "src/main/java/club/thom/tem/TEM.java"
+    replaceIn "src/main/java/club/thom/crystalhollowsdupechecker/CrystalHollowsDupeChecker.java"
     replace "@@VERSION@@", project.version
 }
 dependencies {
@@ -90,7 +90,7 @@ shadowJar {
 
     dependencies {
     }
-    // TEM-0.0.0.1.jar for example
+    // CrystalHollowsDupeChecker-0.0.0.1.jar for example
     archiveFileName = "${baseName}-${version}.${extension}"
 }
 
@@ -98,7 +98,7 @@ reobf {
     shadowJar {} // Re-obfuscate the shadowed JAR
 }
 
-// Signs the jar with TEM's developer team's signature.
+// Signs the jar with our developer team's signature.
 task signJar(type: SignJar) {
     // Skips if the keyStore property is missing.
     onlyIf {
@@ -154,12 +154,6 @@ task instrument(dependsOn: [classes, project.configurations.jacocoAnt]) {
 test.dependsOn instrument
 
 jacocoTestReport {
-    afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.collect {
-            // These are generated methods.
-            fileTree(dir: it, exclude: 'club/thom/tem/models/messages/**')
-        }))
-    }
     dependsOn test
 }
 

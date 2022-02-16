@@ -1,0 +1,8 @@
+[{
+  "modid": "CHDupeChecker",
+  "name": "Crystal Hollows Dupe Checker",
+  "description": "Identifies possibly duped items from the January 2022 Crystal Hollows Dupe in Hypixel Skyblock",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "authorList": ["TGWaffles"]
+}]

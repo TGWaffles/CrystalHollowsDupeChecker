@@ -2,19 +2,38 @@ package club.thom.crystalhollowsdupechecker.utils;
 
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class CheckHelper {
     // List of items that the dupe check does not work on (to my knowledge).
-    String[] BLACKLISTED_ITEM_IDS = new String[]{
-        "WISHING_COMPASS", "PICKONIMBUS", "PREHISTORIC_EGG", "JUNGLE_HEART", "ASCENSION_ROPE"};
+    static List<String> BLACKLISTED_ITEM_IDS = Arrays.asList("WISHING_COMPASS", "PICKONIMBUS", "PREHISTORIC_EGG", "JUNGLE_HEART", "ASCENSION_ROPE");
 
     public static boolean checkDuped(NBTTagCompound itemNbt) {
-        if (!itemNbt.hasKey("tag") || itemNbt.getCompoundTag("tag").hasKey("ExtraAttributes")) {
+        if (!itemNbt.hasKey("tag") || !itemNbt.getCompoundTag("tag").hasKey("ExtraAttributes")) {
             // not a skyblock item!
             return false;
         }
 
-        // TODO: change this :)
-        return true;
+        NBTTagCompound extraAttributes = itemNbt.getCompoundTag("tag").getCompoundTag("ExtraAttributes");
+        // No item ID = possibly not a skyblock item??
+        if (!extraAttributes.hasKey("id")) {
+            return false;
+        }
+        String itemId = extraAttributes.getString("id");
+        // Can't check if it's duped.
+        if (BLACKLISTED_ITEM_IDS.contains(itemId)) {
+            return false;
+        }
+
+        // Where the item is from!
+        if (!extraAttributes.hasKey("originTag")) {
+            return false;
+        }
+        String originTag = extraAttributes.getString("originTag");
+
+
+        return originTag.equals("ITEM_STASH");
     }
 
 }

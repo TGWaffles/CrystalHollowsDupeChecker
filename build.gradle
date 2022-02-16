@@ -1,0 +1,174 @@
+// Using old gradle version for minecraft 1.8
+//file:noinspection GrDeprecatedAPIUsage
+//file:noinspection GroovyAssignabilityCheck
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://maven.minecraftforge.net/' }
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        // Skytils dependency to build with essential (for GUI)
+        classpath 'com.github.Skytils:ForgeGradle:6f5327'
+        // ShadowJar (include dependencies in the jar)
+        classpath "com.github.johnrengelman:shadow:6.1.0"
+    }
+}
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+    maven { url = "https://repo.spongepowered.org/repository/maven-public/" }
+}
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: 'java'
+// For test coverage data
+apply plugin: 'jacoco'
+
+tasks.withType(JavaCompile) {
+    // So that special characters like 5-stars are interpreted properly
+    options.encoding = 'UTF-8'
+}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+version = "0.0.0.1"
+group= "club.thom.crystalhollowsdupechecker" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "CrystalHollowsDupeChecker"
+
+minecraft {
+    // Latest 1.8.9 forge version
+    version = "1.8.9-11.15.1.2318-1.8.9"
+    runDir = "run"
+    mappings = "stable_22"
+    // Add essential
+    // Code to only update version in here and not in the java file
+    replaceIn "src/main/java/club/thom/tem/TEM.java"
+    replace "@@VERSION@@", project.version
+}
+dependencies {
+    // Tests for MCForge
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.awaitility:awaitility-groovy:4.1.1'
+    testCompile 'org.powermock:powermock-core:2.0.9'
+    testCompile 'org.powermock:powermock-module-junit4:2.0.9'
+    testCompile 'org.powermock:powermock-api-mockito2:2.0.9'
+
+    // Log4J (already packaged with forge)
+    //noinspection GradlePackageUpdate
+    implementation 'org.apache.logging.log4j:log4j-api:2.0-beta9'
+    implementation 'org.apache.logging.log4j:log4j-core:2.0-beta9'
+
+}
+
+processResources
+        {
+            // this will ensure that this task is redone when the versions change.
+            inputs.property "version", project.version
+            inputs.property "mcversion", project.minecraft.version
+
+            // replace stuff in mcmod.info, nothing else
+            filesMatching('mcmod.info') {
+                expand 'version': project.version, 'mcversion': project.minecraft.version
+            }
+
+            // copy everything else, that's not the mcmod.info
+            from(sourceSets.main.resources.srcDirs) {
+                exclude 'mcmod.info'
+            }
+        }
+
+sourceJar {
+    enabled = false
+}
+shadowJar {
+    exclude(
+            "META-INF/versions/**"
+    )
+
+    dependencies {
+    }
+    // TEM-0.0.0.1.jar for example
+    archiveFileName = "${baseName}-${version}.${extension}"
+}
+
+reobf {
+    shadowJar {} // Re-obfuscate the shadowed JAR
+}
+
+// Signs the jar with TEM's developer team's signature.
+task signJar(type: SignJar) {
+    // Skips if the keyStore property is missing.
+    onlyIf {
+        project.hasProperty('keyStore')
+    }
+
+    // findProperty allows us to reference the property without it existing.
+    // Using project.propName would cause the script to fail validation if
+    // the property did not exist.
+    keyStore = project.findProperty('keyStore')
+    alias = project.findProperty('keyStoreAlias')
+    storePass = project.findProperty('keyStorePass')
+    keyPass = project.findProperty('keyStoreKeyPass')
+    inputFile = jar.archivePath
+    outputFile = jar.archivePath
+}
+
+test {
+    useJUnit()
+    // Runs code coverage report after testing
+    finalizedBy jacocoTestReport
+}
+
+task instrument(dependsOn: [classes, project.configurations.jacocoAnt]) {
+
+    inputs.files classes.outputs.files
+    File outputDir = new File(project.buildDir, 'instrumentedClasses')
+    outputs.dir outputDir
+    doFirst {
+        project.delete(outputDir)
+        ant.taskdef(
+                resource: 'org/jacoco/ant/antlib.xml',
+                classpath: project.configurations.jacocoAnt.asPath,
+                uri: 'jacoco'
+        )
+        def instrumented = false
+        if (file(sourceSets.main.java.outputDir).exists()) {
+            def instrumentedClassedDir = "${outputDir}/${sourceSets.main.java}"
+            ant.'jacoco:instrument'(destdir: instrumentedClassedDir) {
+                fileset(dir: sourceSets.main.java.outputDir, includes: '**/*.class')
+            }
+            //Replace the classes dir in the test classpath with the instrumented one
+            sourceSets.test.runtimeClasspath -= files(sourceSets.main.java.outputDir)
+            sourceSets.test.runtimeClasspath += files(instrumentedClassedDir)
+            instrumented = true
+        }
+        if (instrumented) {
+            test.jvmArgs += '-noverify'
+        }
+    }
+}
+
+test.dependsOn instrument
+
+jacocoTestReport {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            // These are generated methods.
+            fileTree(dir: it, exclude: 'club/thom/tem/models/messages/**')
+        }))
+    }
+    dependsOn test
+}
+
+// Sign the jar after building
+tasks.signJar.mustRunAfter reobfShadowJar
+tasks.signJar.mustRunAfter shadowJar
+tasks.signJar.mustRunAfter jar
+
+reobfShadowJar.finalizedBy signJar
+shadowJar.finalizedBy signJar
+jar.finalizedBy signJar
+

@@ -23,15 +23,18 @@ public class ItemTooltipListener {
     public void onItemToolTipEvent(ItemTooltipEvent event) {
         ItemStack item = event.itemStack;
         if (CheckHelper.checkDuped(item.serializeNBT())) {
-           event.toolTip.add(1, EnumChatFormatting.AQUA + EnumChatFormatting.OBFUSCATED.toString() +
-                   "|||" + EnumChatFormatting.RED + EnumChatFormatting.BOLD + "POSSIBLY DUPED" +
-                   EnumChatFormatting.AQUA + EnumChatFormatting.OBFUSCATED + "|||" + EnumChatFormatting.GRAY + " (hold shift)");
-           if (GuiContainer.isShiftKeyDown()) {
+            String text = EnumChatFormatting.AQUA + EnumChatFormatting.OBFUSCATED.toString() +
+                    "|||" + EnumChatFormatting.RED + EnumChatFormatting.BOLD + "POSSIBLY DUPED" +
+                    EnumChatFormatting.AQUA + EnumChatFormatting.OBFUSCATED + "|||";
+            event.toolTip.add(1, text + EnumChatFormatting.GRAY + " (hold shift)");
+            // Add to top AND bottom.
+            event.toolTip.add(text);
+            if (GuiContainer.isShiftKeyDown()) {
                event.toolTip.add(2, EnumChatFormatting.WHITE +
                        "Likely duped in the Crystal Hollows dupe of Jan 2022.");
                event.toolTip.add(3, EnumChatFormatting.WHITE +
                        "Has originTag: ITEM_STASH.");
-           }
+            }
         }
     }
 

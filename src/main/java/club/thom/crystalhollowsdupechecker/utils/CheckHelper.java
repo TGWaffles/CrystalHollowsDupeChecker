@@ -7,7 +7,9 @@ import java.util.List;
 
 public class CheckHelper {
     // List of items that the dupe check does not work on (to my knowledge).
-    static List<String> BLACKLISTED_ITEM_IDS = Arrays.asList("WISHING_COMPASS", "PICKONIMBUS", "PREHISTORIC_EGG", "JUNGLE_HEART", "ASCENSION_ROPE");
+    // Enchanted books can go into stash from experimentation table
+    static List<String> BLACKLISTED_ITEM_IDS = Arrays.asList("WISHING_COMPASS", "PICKONIMBUS", "PREHISTORIC_EGG",
+            "JUNGLE_HEART", "ASCENSION_ROPE", "ENCHANTED_BOOK");
 
     public static boolean checkDuped(NBTTagCompound itemNbt) {
         if (!itemNbt.hasKey("tag") || !itemNbt.getCompoundTag("tag").hasKey("ExtraAttributes")) {

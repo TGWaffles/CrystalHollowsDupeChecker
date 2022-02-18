@@ -56,11 +56,6 @@ dependencies {
     testCompile 'org.powermock:powermock-module-junit4:2.0.9'
     testCompile 'org.powermock:powermock-api-mockito2:2.0.9'
 
-    // Log4J (already packaged with forge)
-    //noinspection GradlePackageUpdate
-    implementation 'org.apache.logging.log4j:log4j-api:2.0-beta9'
-    implementation 'org.apache.logging.log4j:log4j-core:2.0-beta9'
-
 }
 
 processResources

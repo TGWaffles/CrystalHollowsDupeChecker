@@ -20,17 +20,17 @@ public class ContainerSetItemListener extends SimpleChannelInboundHandler<Packet
     protected void channelRead0(ChannelHandlerContext ctx, Packet msg) {
         // only listening for S2FPacketSetSlot packets!
         ctx.fireChannelRead(msg);
+        if (!(msg instanceof S2FPacketSetSlot)) {
+            return;
+        }
+        if (!GuiEventListener.isInAh) {
+            return;
+        }
+        S2FPacketSetSlot packet = (S2FPacketSetSlot) msg;
+        if (packet.func_149174_e() == null) {
+            return;
+        }
         new Thread(() -> {
-            if (!(msg instanceof S2FPacketSetSlot)) {
-                return;
-            }
-            if (!GuiEventListener.isInAh) {
-                return;
-            }
-            S2FPacketSetSlot packet = (S2FPacketSetSlot) msg;
-            if (packet.func_149174_e() == null) {
-                return;
-            }
             String uuid = GuiEventListener.checkDuped(packet.func_149173_d(), packet.func_149174_e());
             if (uuid == null) {
                 return;

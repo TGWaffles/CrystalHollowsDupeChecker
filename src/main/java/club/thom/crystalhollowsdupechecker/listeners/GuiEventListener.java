@@ -27,11 +27,11 @@ public class GuiEventListener {
 
     @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event) {
+        uuidToIndex.clear();
         // GUI Closed
         if (event.gui == null) {
             hasRanInThisGui = false;
             isInAh = false;
-            uuidToIndex.clear();
         }
         if (!(event.gui instanceof GuiContainer)) {
             return;
@@ -46,14 +46,16 @@ public class GuiEventListener {
             return;
         }
         isInAh = true;
-        // do dupe checks :)
-        for (Slot slot : container.inventorySlots) {
-            String uuid = checkDuped(slot.slotNumber, slot.getStack());
-            System.out.println(uuid);
-            if (uuid != null) {
-                GuiEventListener.dupedUuids.add(uuid);
+        new Thread(() -> {
+            // do dupe checks :)
+            for (Slot slot : container.inventorySlots) {
+                String uuid = checkDuped(slot.slotNumber, slot.getStack());
+                if (uuid != null) {
+                    GuiEventListener.dupedUuids.add(uuid);
+                }
             }
-        }
+        }).start();
+
     }
 
     public static String checkDuped(int slotIndex, ItemStack stack) {

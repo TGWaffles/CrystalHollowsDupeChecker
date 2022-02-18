@@ -48,6 +48,9 @@ public class CheckHelper {
     }
 
     public static String getUuidFromItemStack(ItemStack stack) {
+        if (stack == null) {
+            return null;
+        }
         NBTTagCompound nbt = stack.serializeNBT();
         NBTTagCompound extraAttributes = getExtraAttributes(nbt);
         if (extraAttributes == null || !extraAttributes.hasKey("uuid")) {

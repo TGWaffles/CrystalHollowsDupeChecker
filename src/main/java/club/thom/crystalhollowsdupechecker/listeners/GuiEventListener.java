@@ -42,13 +42,14 @@ public class GuiEventListener {
         }
         ContainerChest container = (ContainerChest) guiContainer.inventorySlots;
         // Current open gui isn't the AH gui.
-        if (!container.getLowerChestInventory().getDisplayName().getUnformattedText().equals("Auction View")) {
+        if (!container.getLowerChestInventory().getDisplayName().getUnformattedText().equals("Auctions Browser")) {
             return;
         }
         isInAh = true;
         // do dupe checks :)
         for (Slot slot : container.inventorySlots) {
             String uuid = checkDuped(slot.slotNumber, slot.getStack());
+            System.out.println(uuid);
             if (uuid != null) {
                 GuiEventListener.dupedUuids.add(uuid);
             }

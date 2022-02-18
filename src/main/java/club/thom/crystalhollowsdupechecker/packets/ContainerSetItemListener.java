@@ -10,7 +10,6 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 @SuppressWarnings("rawtypes")
 @ChannelHandler.Sharable
 public class ContainerSetItemListener extends SimpleChannelInboundHandler<Packet> {
-
     @SubscribeEvent
     public void connect(FMLNetworkEvent.ClientConnectedToServerEvent event) {
         ChannelPipeline pipeline = event.manager.channel().pipeline();
@@ -21,21 +20,22 @@ public class ContainerSetItemListener extends SimpleChannelInboundHandler<Packet
     protected void channelRead0(ChannelHandlerContext ctx, Packet msg) {
         // only listening for S2FPacketSetSlot packets!
         ctx.fireChannelRead(msg);
-        if (!(msg instanceof S2FPacketSetSlot)) {
-            return;
-        }
-        if (!GuiEventListener.isInAh) {
-            return;
-        }
-        S2FPacketSetSlot packet = (S2FPacketSetSlot) msg;
-        if (packet.func_149174_e() == null) {
-            return;
-        }
-        System.out.println(packet.func_149174_e().getDisplayName());
-        String uuid = GuiEventListener.checkDuped(packet.func_149173_d(), packet.func_149174_e());
-        if (uuid == null) {
-            return;
-        }
-        GuiEventListener.dupedUuids.add(uuid);
+        new Thread(() -> {
+            if (!(msg instanceof S2FPacketSetSlot)) {
+                return;
+            }
+            if (!GuiEventListener.isInAh) {
+                return;
+            }
+            S2FPacketSetSlot packet = (S2FPacketSetSlot) msg;
+            if (packet.func_149174_e() == null) {
+                return;
+            }
+            String uuid = GuiEventListener.checkDuped(packet.func_149173_d(), packet.func_149174_e());
+            if (uuid == null) {
+                return;
+            }
+            GuiEventListener.dupedUuids.add(uuid);
+        }).start();
     }
 }

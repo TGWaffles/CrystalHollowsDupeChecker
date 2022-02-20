@@ -1,8 +1,10 @@
 package club.thom.crystalhollowsdupechecker;
 
+import club.thom.crystalhollowsdupechecker.commands.DupeResetCommand;
 import club.thom.crystalhollowsdupechecker.listeners.GuiEventListener;
 import club.thom.crystalhollowsdupechecker.listeners.ItemTooltipListener;
 import club.thom.crystalhollowsdupechecker.packets.ContainerSetItemListener;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -20,5 +22,7 @@ public class CrystalHollowsDupeChecker {
         MinecraftForge.EVENT_BUS.register(new ItemTooltipListener());
         MinecraftForge.EVENT_BUS.register(new GuiEventListener());
         MinecraftForge.EVENT_BUS.register(new ContainerSetItemListener());
+
+        ClientCommandHandler.instance.registerCommand(new DupeResetCommand());
     }
 }

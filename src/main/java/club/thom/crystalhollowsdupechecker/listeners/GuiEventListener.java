@@ -25,24 +25,31 @@ public class GuiEventListener {
     private static final HashMap<String, Integer> uuidToIndex = new HashMap<>();
     public static final HashSet<String> dupedUuids = new HashSet<>();
 
+    private void cleanUp() {
+        hasRanInThisGui = false;
+        isInAh = false;
+    }
+
     @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event) {
         uuidToIndex.clear();
         // GUI Closed
         if (event.gui == null) {
-            hasRanInThisGui = false;
-            isInAh = false;
+            cleanUp();
         }
         if (!(event.gui instanceof GuiContainer)) {
+            cleanUp();
             return;
         }
         GuiContainer guiContainer = (GuiContainer) event.gui;
         if (!(guiContainer.inventorySlots instanceof ContainerChest)) {
+            cleanUp();
             return;
         }
         ContainerChest container = (ContainerChest) guiContainer.inventorySlots;
         // Current open gui isn't the AH gui.
         if (!container.getLowerChestInventory().getDisplayName().getUnformattedText().equals("Auctions Browser")) {
+            cleanUp();
             return;
         }
         isInAh = true;

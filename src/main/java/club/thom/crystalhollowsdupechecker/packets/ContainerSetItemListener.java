@@ -30,6 +30,9 @@ public class ContainerSetItemListener extends SimpleChannelInboundHandler<Packet
         if (packet.func_149174_e() == null) {
             return;
         }
+        if (packet.func_149175_c() != GuiEventListener.ahWindowId) {
+            return;
+        }
         new Thread(() -> {
             String uuid = GuiEventListener.checkDuped(packet.func_149173_d(), packet.func_149174_e());
             if (uuid == null) {

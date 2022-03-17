@@ -24,14 +24,17 @@ public class GuiEventListener {
     public static boolean isInAh = false;
     private static final HashMap<String, Integer> uuidToIndex = new HashMap<>();
     public static final HashSet<String> dupedUuids = new HashSet<>();
+    public static int ahWindowId = 0;
 
     private void cleanUp() {
         hasRanInThisGui = false;
         isInAh = false;
+        uuidToIndex.clear();
     }
 
     @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event) {
+        System.out.println("resetting gui stuff");
         uuidToIndex.clear();
         // GUI Closed
         if (event.gui == null) {
@@ -52,6 +55,7 @@ public class GuiEventListener {
             cleanUp();
             return;
         }
+        ahWindowId = container.windowId;
         isInAh = true;
         new Thread(() -> {
             // do dupe checks :)

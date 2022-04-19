@@ -1,3 +1,10 @@
+# Note: This project has now been archived. Follow https://github.com/TGWaffles/TheExoticsMod for continued development of my dupe checker. 
+
+The dupe checker integrated into TEM is a LOT more powerful than this.
+
+---
+
+
 # CrystalHollowsDupeChecker
 [![GitHub](https://img.shields.io/github/v/release/TGWaffles/CrystalHollowsDupeChecker?logo=github)](https://github.com/TGWaffles/CrystalHollowsDupeChecker/releases/latest) [![Github](https://img.shields.io/github/downloads/TGWaffles/CrystalHollowsDupeChecker/total?label=Total%20Downloads&logo=GITHUB)](https://github.com/TGWaffles/CrystalHollowsDupeChecker/releases/latest) [![Discord](https://img.shields.io/discord/944323039565320232?label=discord&logo=Discord&logoColor=FFFFFF%22)](https://discord.gg/arDxQZHBUs) [![Contributors](https://img.shields.io/github/contributors/TGWaffles/CrystalHollowsDupeChecker?&logo=GitHub)](https://github.com/TGWaffles/CrystalHollowsDupeChecker/graphs/contributors) [![Contributors](https://img.shields.io/github/license/TGWaffles/CrystalHollowsDupeChecker?color=blue)](https://github.com/TGWaffles/CrystalHollowsDupeChecker/blob/master/LICENSE)
 
